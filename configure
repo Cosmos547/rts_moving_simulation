@@ -1,5 +1,4 @@
 
-/*export CXX=g++-4.9*/
 
 premake4 gmake
 make --trace
