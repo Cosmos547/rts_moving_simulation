@@ -1,0 +1,6 @@
+
+/*export CXX=g++-4.9*/
+
+premake4 gmake
+make --trace
+LD_LIBRARY_PATH=./SFML-2.4.2/lib ./rts
