@@ -1,5 +1,4 @@
 
 
 premake4 gmake
-make --trace
-LD_LIBRARY_PATH=./SFML-2.4.2/lib ./rts
+make
