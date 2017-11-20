@@ -3,13 +3,17 @@
 #include "WaterFountain.h"
 #include "SceneObject.h"
 #include <iostream>
+#include "PotentialMap.h"
+#include "utility.h"
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
     sf::Clock clock;
     float elapsedTime;
-    WaterFountain wf = WaterFountain(300, 200, 300, 300);
+    PotentialMap* pm = generateMapFromFile("map.txt");
+    
+
 
     while (window.isOpen())
     {
@@ -21,12 +25,16 @@ int main()
         }
         elapsedTime = clock.getElapsedTime().asSeconds();
         clock.restart();
-        wf.update(elapsedTime);
+        pm->update(elapsedTime);
         window.setTitle("FPS: " + std::to_string(1.0f/elapsedTime));
 
         window.clear();
-        wf.render(&window);
+        pm->render(&window);
         window.display();
+
+        // Code to limit framerate for testing purpose
+        //while (clock.getElapsedTime().asSeconds() < 0.01) {
+        //}
     }
 
     return 0;

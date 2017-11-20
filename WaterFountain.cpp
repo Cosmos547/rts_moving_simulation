@@ -9,7 +9,7 @@
 
 WaterFountain::WaterFountain(float xpos, float ypos, float xsize, float ysize) : SceneObject(xpos, ypos, xsize, ysize) {
 
-    this->generationRate = 0.5;
+    this->generationRate = xsize > ysize ? ysize : xsize;
     srand(time(NULL));
 
     this->x_cen = xpos + xsize/2.0f;
@@ -46,9 +46,10 @@ void WaterFountain::render(sf::RenderWindow* window) {
 void WaterFountain::update(float time) {
     float rd = (float)rand()/RAND_MAX;
     // Model the generation rate as generating a random number between 0 and 1 then if it's below the generation rate take actions.
-    if (rd < generationRate) {
+    while (rd < generationRate*time) {
         float* random_pt = generateRandomParticle();
         particles.push_back(random_pt);
+        rd += 1.0f;
     }
 
     // Updates all the particles in the system

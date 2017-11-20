@@ -7,8 +7,8 @@
 class WaterFountain : public SceneObject{
     public:
         WaterFountain(float xpos, float ypos, float xsize, float ysize);
-        void render(sf::RenderWindow* window);
-        void update(float timestep);
+        virtual void render(sf::RenderWindow* window);
+        virtual void update(float timestep);
 
 
     private:
