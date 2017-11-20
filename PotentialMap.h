@@ -11,6 +11,7 @@ class PotentialMap {
         ~PotentialMap();
         void update(float timestep);
         void render(sf::RenderWindow* window);
+        void setRenderPotentialMap(bool b);
 
 
     private:
@@ -23,6 +24,9 @@ class PotentialMap {
         std::vector<SceneObject*> sobjs;
         int** grid;
         void renderGrid(sf::RenderWindow* window);
+        bool renderPotentialMap;
+        sf::Texture pmapT;
+        sf::Sprite pmapS;
 
 
 };

@@ -17,6 +17,15 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
             grid[i][j] = 0;
         }
     }
+
+    pmapT.create(w, h);
+    pmapT.setSmooth(false);
+    pmapS.setTexture(pmapT);
+
+    pmapS.setScale(w_pixel, h_pixel);
+    pmapS.setPosition(0, 0);
+
+    renderPotentialMap = true;
 }
 
 PotentialMap::~PotentialMap() {
@@ -24,19 +33,23 @@ PotentialMap::~PotentialMap() {
 }
 
 void PotentialMap::renderGrid(sf::RenderWindow* window) {
-    sf::RectangleShape rect(sf::Vector2f(w_pixel ,h_pixel));
-    rect.setFillColor(sf::Color(0, 179, 0));
+    static sf::Uint8* pixels = new sf::Uint8[w_size * h_size * 4];
     for (int i = 0; i < h_size; i++) {
         for (int j = 0; j < w_size; j++) {
-            rect.setPosition(j*w_pixel, i*h_pixel);
-            (*window).draw(rect);
+            pixels[i*w_size*4 + 4*j] = 0;
+            pixels[i*w_size*4 + 4*j+1] = 127;
+            pixels[i*w_size*4 + 4*j+2] = 0;
+            pixels[i*w_size*4 + 4*j+3] = 255;
         }
     }
-
+    pmapT.update(pixels);
+    (*window).draw(pmapS);
 }
 
 void PotentialMap::render(sf::RenderWindow* window) {
-    renderGrid(window);
+    if (renderPotentialMap) {
+        renderGrid(window);
+    }
     for (auto &i : sobjs) {
         i->render(window);
     }
