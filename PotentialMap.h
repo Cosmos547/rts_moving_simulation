@@ -11,6 +11,7 @@ class PotentialMap {
         ~PotentialMap();
         void update(float timestep);
         void render(sf::RenderWindow* window);
+        void renderMinimap(sf::RenderWindow* window);
         void setRenderPotentialMap(bool b);
         void setDestinationGrid(sf::Vector2f pos);
         sf::Vector2i getGridIndex(sf::Vector2f pos);
@@ -28,6 +29,9 @@ class PotentialMap {
         bool renderPotentialMap;
         sf::Texture pmapT;
         sf::Sprite pmapS;
+
+        sf::Texture minimapT;
+        sf::Sprite minimapS;
 
 
         sf::Texture backgroundT;

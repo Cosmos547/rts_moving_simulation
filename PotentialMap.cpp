@@ -26,6 +26,14 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     pmapS.setScale(w_pixel, h_pixel);
     pmapS.setPosition(0, 0);
 
+
+
+    minimapT.create(w, h);
+    minimapT.setSmooth(false);
+    minimapS.setTexture(minimapT);
+    minimapS.setPosition(4*(int)p_width/5, 4*(int)p_height/5);
+    minimapS.setScale((int)p_width/5/w, (int)p_height/5/h);
+
     //backgroundT.setRepeated(true);
     if (!backgroundT.loadFromFile("Assets/groundtiles.png", sf::IntRect(32, 0, 16, 16))) {
         std::cout << "Loading texture error : " << "Assets/groundtiles.png" << std::endl;
@@ -33,7 +41,7 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     backgroundT.setSmooth(false);
     backgroundT.setRepeated(true);
     backgroundS = sf::Sprite(backgroundT);
-    backgroundS.setTextureRect({0, 0, p_width, p_height});
+    backgroundS.setTextureRect({0, 0, (int)p_width, (int)p_height});
     backgroundS.setPosition(0,0);
 
 
@@ -100,4 +108,24 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
             grid[i][j] = light;
         }
     }
+}
+
+
+void PotentialMap::renderMinimap(sf::RenderWindow* window) {
+    static sf::Uint8* pixels = new sf::Uint8[w_size * h_size * 4];
+    for (int i = 0; i < h_size; i++) {
+        for (int j = 0; j < w_size; j++) {
+            pixels[i*w_size*4 + 4*j] = 0;
+            if (grid[i][j] >= -127){
+                pixels[i*w_size*4 + 4*j+1] = 127 + grid[i][j];
+            } else {
+                pixels[i*w_size*4 + 4*j+1] = 0;
+            }
+            pixels[i*w_size*4 + 4*j+2] = 0;
+            pixels[i*w_size*4 + 4*j+3] = 255;
+        }
+    }
+    minimapT.update(pixels);
+    (*window).draw(minimapS);
+
 }
