@@ -26,7 +26,7 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     pmapS.setScale(w_pixel, h_pixel);
     pmapS.setPosition(0, 0);
 
-    renderPotentialMap = true;
+    renderPotentialMap = false;
 }
 
 PotentialMap::~PotentialMap() {
