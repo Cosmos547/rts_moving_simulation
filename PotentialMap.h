@@ -12,7 +12,8 @@ class PotentialMap {
         void update(float timestep);
         void render(sf::RenderWindow* window);
         void setRenderPotentialMap(bool b);
-
+        void setDestinationGrid(sf::Vector2f pos);
+        sf::Vector2i getGridIndex(sf::Vector2f pos);
 
     private:
         float p_width;

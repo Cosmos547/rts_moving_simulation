@@ -6,3 +6,5 @@
 #include "WaterFountain.h"
 
 PotentialMap* generateMapFromFile(std::string filename);
+
+int manhattonDistance(int ax, int ay, int bx, int by);
