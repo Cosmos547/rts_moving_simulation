@@ -26,7 +26,19 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     pmapS.setScale(w_pixel, h_pixel);
     pmapS.setPosition(0, 0);
 
-    renderPotentialMap = true;
+    //backgroundT.setRepeated(true);
+    if (!backgroundT.loadFromFile("Assets/groundtiles.png", sf::IntRect(32, 0, 16, 16))) {
+        std::cout << "Loading texture error : " << "Assets/groundtiles.png" << std::endl;
+    }
+    backgroundT.setSmooth(false);
+    backgroundT.setRepeated(true);
+    backgroundS = sf::Sprite(backgroundT);
+    backgroundS.setTextureRect({0, 0, p_width, p_height});
+    backgroundS.setPosition(0,0);
+
+
+
+    renderPotentialMap = false;
 
     sobjs.push_back(new WaterFountain(300, 200, 200, 200));
     sobjs.push_back(new SceneTexture(100, 200, 190/3, 269/3, "Assets/tree.png"));
@@ -55,6 +67,7 @@ void PotentialMap::renderGrid(sf::RenderWindow* window) {
 }
 
 void PotentialMap::render(sf::RenderWindow* window) {
+    (*window).draw(backgroundS);
     if (renderPotentialMap) {
         renderGrid(window);
     }

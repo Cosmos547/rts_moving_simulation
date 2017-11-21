@@ -69,7 +69,7 @@ int main()
         
         sf::Vector2i position = sf::Mouse::getPosition(window);
         preMouse = window.mapPixelToCoords(position, view);
-        pm->setDestinationGrid(preMouse);
+        //pm->setDestinationGrid(preMouse);
         position = pm->getGridIndex(preMouse);
         //std::cout << "Current position: " << position.x << " " << position.y << std::endl;
 

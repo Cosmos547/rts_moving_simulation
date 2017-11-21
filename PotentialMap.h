@@ -30,4 +30,8 @@ class PotentialMap {
         sf::Sprite pmapS;
 
 
+        sf::Texture backgroundT;
+        sf::Sprite backgroundS;
+
+
 };
