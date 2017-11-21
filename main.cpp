@@ -16,6 +16,7 @@ int main()
     //window.setVerticalSyncEnabled(true);
 
     sf::View view(sf::FloatRect(0,0,800,600));
+    sf::View minimap(sf::FloatRect(0, 0, 800, 600));
     bool middleMouseDown = false;
     sf::Vector2f preMouse;
     sf::Vector2f holdMouseS;
@@ -65,7 +66,6 @@ int main()
         
 
 
-        window.setView(view);
         
         sf::Vector2i position = sf::Mouse::getPosition(window);
         preMouse = window.mapPixelToCoords(position, view);
@@ -80,6 +80,7 @@ int main()
         window.setTitle("FPS: " + std::to_string(1.0f/elapsedTime));
 
         window.clear();
+        window.setView(view);
         pm->render(&window);
         
 
@@ -103,6 +104,8 @@ int main()
         } else {
             leftMouseDown = false;
         }
+
+        window.setView(minimap);
 
 
         window.display();
