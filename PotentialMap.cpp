@@ -4,11 +4,11 @@
 #include "SceneObject.h"
 #include "PotentialMap.h"
 #include "WaterFountain.h"
+#include "SceneTexture.h"
 #include "utility.h"
 
 
 PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(width), p_height(height), w_size(w), h_size(h) {
-    sobjs.push_back(new WaterFountain(300, 200, 200, 200));
     w_pixel = width/w;
     h_pixel = height/h;
     grid = new int*[h];
@@ -26,7 +26,10 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     pmapS.setScale(w_pixel, h_pixel);
     pmapS.setPosition(0, 0);
 
-    renderPotentialMap = false;
+    renderPotentialMap = true;
+
+    sobjs.push_back(new WaterFountain(300, 200, 200, 200));
+    sobjs.push_back(new SceneTexture(100, 200, 190/3, 269/3, "Assets/tree.png"));
 }
 
 PotentialMap::~PotentialMap() {

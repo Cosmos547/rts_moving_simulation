@@ -4,13 +4,14 @@
 #include "SceneObject.h"
 
 
-class SceneTexture : SceneObject {
+class SceneTexture : public SceneObject {
     public:
         SceneTexture(float xpos, float ypos, float xsize, float ysize, std::string textureName);
         virtual void render(sf::RenderWindow* window);
 
     private:
         sf::Texture t;
+        sf::RectangleShape rect;
 
 
 };

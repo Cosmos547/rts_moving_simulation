@@ -35,9 +35,10 @@ int main()
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Middle)) {
                     sf::Vector2i pos = sf::Mouse::getPosition(window);
                     sf::Vector2f mpos = window.mapPixelToCoords(pos, view);
-                    std::cout << "cur mouse: " << mpos.x << " " << mpos.y << std::endl;
-                    std::cout << "pre mouse: " << preMouse.x << " " << preMouse.y << std::endl;
-                    std::cout << "Mous delta: " << (mpos - preMouse).x << " " << (mpos - preMouse).y << std::endl;
+
+                    //std::cout << "cur mouse: " << mpos.x << " " << mpos.y << std::endl;
+                    //std::cout << "pre mouse: " << preMouse.x << " " << preMouse.y << std::endl;
+                    //std::cout << "Mous delta: " << (mpos - preMouse).x << " " << (mpos - preMouse).y << std::endl;
                     view.move(preMouse - mpos);
                 }
                 else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
