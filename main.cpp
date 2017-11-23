@@ -71,6 +71,7 @@ int main()
         preMouse = window.mapPixelToCoords(position, view);
 
         pm->setDestinationGrid(preMouse);
+        pm->setGatherPoint(preMouse.x, preMouse.y);
 
         position = pm->getGridIndex(preMouse);
         //std::cout << "Current position: " << position.x << " " << position.y << std::endl;

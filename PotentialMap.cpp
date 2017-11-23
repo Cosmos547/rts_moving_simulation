@@ -6,6 +6,8 @@
 #include "WaterFountain.h"
 #include "SceneTexture.h"
 #include "utility.h"
+#include "Boid.h"
+#include <time.h>
 
 
 PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(width), p_height(height), w_size(w), h_size(h) {
@@ -18,6 +20,9 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
             grid[i][j] = 0;
         }
     }
+
+
+    srand(time(NULL));
 
     pmapT.create(w, h);
     pmapT.setSmooth(false);
@@ -48,8 +53,32 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
 
     renderPotentialMap = false;
 
-    sobjs.push_back(new WaterFountain(300, 200, 200, 200));
+    //sobjs.push_back(new WaterFountain(300, 200, 200, 200));
     sobjs.push_back(new SceneTexture(100, 200, 190/3, 269/3, "Assets/tree.png"));
+
+
+
+    boids.push_back(new Boid(200, 100));
+    boids.push_back(new Boid(210, 100));
+    boids.push_back(new Boid(220, 100));
+    boids.push_back(new Boid(230, 100));
+    boids.push_back(new Boid(240, 100));
+    boids.push_back(new Boid(250, 100));
+    boids.push_back(new Boid(260, 100));
+    boids.push_back(new Boid(270, 100));
+    boids.push_back(new Boid(280, 100));
+    boids.push_back(new Boid(290, 100));
+    boids.push_back(new Boid(200, 110));
+    boids.push_back(new Boid(200, 120));
+    boids.push_back(new Boid(200, 130));
+    boids.push_back(new Boid(200, 140));
+    boids.push_back(new Boid(200, 150));
+    boids.push_back(new Boid(200, 160));
+    boids.push_back(new Boid(200, 170));
+    boids.push_back(new Boid(200, 180));
+
+
+
 }
 
 PotentialMap::~PotentialMap() {
@@ -82,13 +111,42 @@ void PotentialMap::render(sf::RenderWindow* window) {
     for (auto &i : sobjs) {
         i->render(window);
     }
+    for (auto &i : boids) {
+        i->render(window);
+    }
 }
 
 
 void PotentialMap::update(float timestep) {
+    static float t = 0;
+    t += timestep;
+    if (t > 15.0f) t = 15.0f;
+    bool er = false;
+    if ((float)rand()/RAND_MAX < 0.3*timestep*60) {
+        er = true;
+        float bx = (float)rand()/RAND_MAX;
+        bx *= 800;
+        float by = (float)rand()/RAND_MAX;
+        by *= 100;
+        boids.push_back(new Boid(bx, by));
+    }
     for (auto &i : sobjs) {
         i->update(timestep);
     }
+    for (auto &i : boids) {
+        sf::Vector2f ipos = i->getPosition();
+        float ang = atan2(gather_y - ipos.y, gather_x - ipos.x);
+        float dis = sqrt(pow(gather_y - ipos.y,2) + pow(gather_x - ipos.x, 2));
+        //i->calculate_forces(&boids, 0, 1);
+        i->calculate_forces(&boids, cos(ang), sin(ang));
+        //i->calculate_forces(&boids, 0, 0);
+        i->update(timestep);
+    }
+
+    if (t > 10.0f && !boids.empty() && er) {
+        boids.erase(boids.begin());
+    }
+
 }
 
 
@@ -128,4 +186,10 @@ void PotentialMap::renderMinimap(sf::RenderWindow* window) {
     minimapT.update(pixels);
     (*window).draw(minimapS);
 
+}
+
+
+void PotentialMap::setGatherPoint(float x, float y) {
+    this->gather_x = x;
+    this->gather_y = y;
 }
