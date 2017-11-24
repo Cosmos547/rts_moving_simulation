@@ -44,7 +44,8 @@ void Boid::update(float timestep) {
 }
 
 
-void Boid::calculate_forces(std::vector<Boid*> *boids, float dir_x, float dir_y) {
+void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
+    pf = dir;
     force = sf::Vector2f(0, 0);
     // Calculate separation force
     float sep = 25;
@@ -87,7 +88,7 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, float dir_x, float dir_y)
     for (auto &i : *boids) {
         float dis = this->getDistance(i);
         if (dis > 0 && dis < ndist) {
-            align_force += i->getSpeed();
+            align_force += limitVector(i->getSpeed(), 1);
             count ++;
         }
     }
@@ -116,8 +117,8 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, float dir_x, float dir_y)
     for (auto &i : *boids) {
         float dis = this->getDistance(i);
         if (dis > 0 && dis < ndist) {
-            cohesion_force += i->getPosition() - location;
-            cohesion_force = cohesion_force/dis;
+            cohesion_force += (i->getPosition() - location)/dis;
+            cohesion_force = cohesion_force;
             count ++;
         }
     }
@@ -138,17 +139,17 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, float dir_x, float dir_y)
 
 
     // Calculate Destination force
-    sf::Vector2f dest_force(dir_x, dir_y);
+    sf::Vector2f dest_force = dir;
     //dest_force *= max_speed;
     //dest_force = dest_force - speed;
     //dest_force = limitVector(dest_force, max_force);
 
 
-    force += 7.5f * sep_force;
+    force += 5.5f * sep_force;
     force += 0.01f * align_force;
     force += 0.1f * cohesion_force;
-    force += 0.2f * dest_force;
-    force *= 10000.0f;
+    force += 0.05f * dest_force;
+    force *= 1000.0f;
 
 
     
@@ -172,6 +173,25 @@ float Boid::getDistance(Boid* b) {
 
 }
 
+void Boid::renderFOG(sf::RenderTexture* t) {
+
+    //sf::Texture lightTexture;
+    //sf::Sprite light;
+    //sf::Sprite lightmap;
+
+    //lightmap.setTexture((*t).getTexture());
+    //lightTexture.loadFromFile("Assets/light.png");
+    //lightTexture.setSmooth(true);
+
+    //light.setTexture(lightTexture);
+    //light.setTextureRect(sf::IntRect(0, 0, 50, 50));
+    //light.setOrigin(25.f, 25.f);
+    //light.setColor(sf::Color::White);
+    //light.setPosition(location);
+    //(*t).draw(light, sf::BlendAdd);
+
+}
+
 
 void Boid::render(sf::RenderWindow* window) {
     static sf::CircleShape sh(5.0f);
@@ -182,9 +202,14 @@ void Boid::render(sf::RenderWindow* window) {
     rect.setSize(sf::Vector2f(5.0f, 5.0f));
     rect.setOrigin(2.5f, 2.5f);
     rect.setFillColor(sf::Color(180, 20, 50));
-    rect.setRotation(getOrientation()*3.14159);
     rect.setPosition(location);
     (*window).draw(rect);
+    sf::Vertex line[2];
+    line[0].position = location;
+    line[1].position = location + speed/5.0f;
+    line[0].color = sf::Color::Blue;
+    line[1].color = sf::Color::Blue;
+    (*window).draw(line, 2, sf::Lines);
     //sh.setPointCount(50);
     //sh.setOutlineThickness(1.0f);
     //sh.setFillColor(sf::Color(180,20,50,0));

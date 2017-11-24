@@ -17,6 +17,10 @@ class PotentialMap {
         void setDestinationGrid(sf::Vector2f pos);
         sf::Vector2i getGridIndex(sf::Vector2f pos);
         void setGatherPoint(float x, float y);
+        sf::Vector2f calculatePotentialFieldForce(sf::Vector2f pos);
+        bool testValidGridIndex(sf::Vector2i index);
+        void initializeFOG();
+        void updateFOG();
 
     private:
         float p_width;
@@ -41,6 +45,14 @@ class PotentialMap {
         sf::Texture backgroundT;
         sf::Sprite backgroundS;
         std::vector<Boid*> boids;
+
+
+        sf::RenderTexture fog_of_war_t;
+        sf::Sprite fog_of_war_s;
+
+        sf::Texture lightTexture;
+        sf::Sprite light;
+        sf::Sprite lightmap;
 
 
 };

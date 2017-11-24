@@ -11,8 +11,9 @@ class Boid {
     public:
         Boid(float xpos, float ypos);
         void update(float timestep);
-        void calculate_forces(std::vector<Boid*> *boids, float dir_x, float dir_y);
+        void calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir);
         void render(sf::RenderWindow* window);
+        void renderFOG(sf::RenderTexture* t);
         float getDistance(Boid* b);
         float getOrientation();
         sf::Vector2f getPosition();
@@ -28,4 +29,5 @@ class Boid {
         sf::Vector2f location;
         sf::Vector2f speed;
         sf::Vector2f force;
+        sf::Vector2f pf;
 };
