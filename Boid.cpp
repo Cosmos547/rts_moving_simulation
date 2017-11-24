@@ -13,7 +13,22 @@ Boid::Boid(float xpos, float ypos) {
     force = sf::Vector2f(0,0);
     max_speed = 50;
     max_force = 100;
+    isActive = false;
 
+}
+
+
+void Boid::setActive(bool b) {
+    isActive = b;
+}
+
+bool Boid::getActiveState() {
+    return isActive;
+}
+
+
+void Boid::setDestination(sf::Vector2f desti) {
+    this->desti = desti;
 }
 
 sf::Vector2f Boid::limitVector(sf::Vector2f vec, float max) {
@@ -38,6 +53,9 @@ sf::Vector2f Boid::getSpeed() {
 }
 
 void Boid::update(float timestep) {
+    if (abs(desti.x - location.x) + abs(desti.y - location.y) < 50.0f) {
+        isActive = false;
+    }
     calculate_speed(timestep);
     update_position(timestep);
 
@@ -85,12 +103,20 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
     float ndist = 50;
     sf::Vector2f align_force(0,0);
     count = 0;
+    int account = 0;
     for (auto &i : *boids) {
         float dis = this->getDistance(i);
         if (dis > 0 && dis < ndist) {
+            if (!i->getActiveState()) {
+                account += 1;
+            }
             align_force += limitVector(i->getSpeed(), 1);
             count ++;
         }
+    }
+
+    if (account > count/2) {
+        isActive = false;
     }
 
     if (count > 0) {
@@ -145,10 +171,13 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
     //dest_force = limitVector(dest_force, max_force);
 
 
-    force += 5.5f * sep_force;
-    force += 0.01f * align_force;
-    force += 0.1f * cohesion_force;
-    force += 0.05f * dest_force;
+    force += 1.5f * sep_force;
+    if (isActive) {
+        force += 4.0f * sep_force;
+        force += 0.005f * align_force;
+        force += 0.1f * cohesion_force;
+        force += 0.05f * dest_force;
+    }
     force *= 1000.0f;
 
 
@@ -157,7 +186,7 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
 
 
 void Boid::calculate_speed(float timestep) {
-    speed *= 0.998f;
+    speed = speed - timestep*speed;
     speed += force*timestep;
     speed = limitVector(speed, max_speed);
 }

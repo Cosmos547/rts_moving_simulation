@@ -63,15 +63,15 @@ int main()
 
 
         
-        
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
+            pm->setDestinationGrid(preMouse);
+        }
 
 
         
         sf::Vector2i position = sf::Mouse::getPosition(window);
         preMouse = window.mapPixelToCoords(position, view);
 
-        pm->setDestinationGrid(preMouse);
-        pm->setGatherPoint(preMouse.x, preMouse.y);
 
         position = pm->getGridIndex(preMouse);
         //std::cout << "Current position: " << position.x << " " << position.y << std::endl;

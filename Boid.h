@@ -19,6 +19,9 @@ class Boid {
         sf::Vector2f getPosition();
         sf::Vector2f limitVector(sf::Vector2f vec, float max);
         sf::Vector2f getSpeed();
+        void setDestination(sf::Vector2f desti);
+        void setActive(bool b);
+        bool getActiveState();
 
 
     private:
@@ -30,4 +33,9 @@ class Boid {
         sf::Vector2f speed;
         sf::Vector2f force;
         sf::Vector2f pf;
+
+
+        bool isActive;
+
+        sf::Vector2f desti;
 };

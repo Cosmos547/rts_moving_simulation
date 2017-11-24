@@ -50,7 +50,7 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
 
 
 
-    //renderPotentialMap = true;
+    renderPotentialMap = true;
 
     //sobjs.push_back(new WaterFountain(300, 200, 200, 200));
     sobjs.push_back(new SceneTexture(100, 200, 190/3, 269/3, "Assets/tree.png"));
@@ -133,12 +133,21 @@ void PotentialMap::render(sf::RenderWindow* window) {
 
 
 void PotentialMap::update(float timestep) {
+
+    //for (int i = 450; i < 550; i++) {
+        //for (int j = 0; j < 600; j++) {
+            //grid[i][j] = -500;
+        //}
+    //}
+
+
+
     static float t = 0;
     t += timestep;
     if (t > 15.0f) t = 15.0f;
     bool er = false;
     float posi = (float)rand()/RAND_MAX;
-    while (posi > (1.0 - 0.3*timestep*60) && t < 1.0f) {
+    while (posi > (1.0 - 0.3*timestep*60) && t < 5.0f) {
         er = true;
         float bx = (float)rand()/RAND_MAX;
         bx *= 800;
@@ -154,10 +163,6 @@ void PotentialMap::update(float timestep) {
         i->update(timestep);
     }
     for (auto &i : boids) {
-        sf::Vector2f ipos = i->getPosition();
-        float ang = atan2(gather_y - ipos.y, gather_x - ipos.x);
-        float dis = sqrt(pow(gather_y - ipos.y,2) + pow(gather_x - ipos.x, 2));
-        //i->calculate_forces(&boids, sf::Vector2f(cos(ang), sin(ang)));
         i->calculate_forces(&boids, this->calculatePotentialFieldForce(i->getPosition()));
         i->update(timestep);
     }
@@ -186,11 +191,10 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
     }
 
     for (auto &i : boids) {
-        sf::Vector2i ipos = getGridIndex(i->getPosition());
-        if (testValidGridIndex(ipos)) {
-            grid[ipos.y][ipos.x] -= 10;
-        }
+        i->setActive(true);
+        i->setDestination(pos);
     }
+
 }
 
 
@@ -258,7 +262,6 @@ sf::Vector2f PotentialMap::calculatePotentialFieldForce(sf::Vector2f pos) {
 
 void PotentialMap::updateFOG() {
     fog_of_war_t.clear(sf::Color(100.0f, 100.0f, 100.0f, 180.0f));
-    //fog_of_war_t.clear(sf::Color(255.f, 255.f, 255.f, 20.0f));
 
     for (auto &i : boids) {
         //i->renderFOG(&fog_of_war_t);
