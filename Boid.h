@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <cmath>
+#include "PotentialField.h"
 
 
 
@@ -13,7 +14,6 @@ class Boid {
         void update(float timestep);
         void calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir);
         void render(sf::RenderWindow* window);
-        void renderFOG(sf::RenderTexture* t);
         float getDistance(Boid* b);
         float getOrientation();
         sf::Vector2f getPosition();
@@ -22,6 +22,12 @@ class Boid {
         void setDestination(sf::Vector2f desti);
         void setActive(bool b);
         bool getActiveState();
+        void limitForceDir(sf::Vector2f dir);
+        void setSelected(bool b);
+        bool getSelected();
+        void loadPF(PotentialField* p, int pid);
+        int getPFID();
+        int** getGrid();
 
 
     private:
@@ -34,8 +40,11 @@ class Boid {
         sf::Vector2f force;
         sf::Vector2f pf;
 
+        PotentialField* field;
+        int pfid;
 
         bool isActive;
+        bool isSelected;
 
         sf::Vector2f desti;
 };

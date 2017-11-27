@@ -21,6 +21,31 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
         }
     }
 
+    shade = new int*[h];
+    for(int i = 0; i < h; i++) {
+        shade[i] = new int[w];
+        for (int j = 0; j < w; j++) {
+            shade[i][j] = 0;
+        }
+    }
+
+    obs_grid = new int*[h];
+    for(int i = 0; i < h; i++) {
+        obs_grid[i] = new int[w];
+        for (int j = 0; j < w; j++) {
+            obs_grid[i][j] = 0;
+        }
+    }
+
+    for (int i = 0; i < h; i++) {
+        obs_grid[i][0] = 1;
+        obs_grid[i][w-1] = 1;
+    }
+
+    for (int i = 0; i < w; i++) {
+        obs_grid[0][i] = 1;
+        obs_grid[h-1][i] = 1;
+    }
 
     srand(time(NULL));
 
@@ -49,18 +74,28 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     backgroundS.setPosition(0,0);
 
 
+    pfid_count = 1;
 
-    renderPotentialMap = true;
 
-    //sobjs.push_back(new WaterFountain(300, 200, 200, 200));
+
+    //renderPotentialMap = true;
+
+    sobjs.push_back(new WaterFountain(200, 200, 200, 200));
     sobjs.push_back(new SceneTexture(100, 200, 190/3, 269/3, "Assets/tree.png"));
-
+    obs_grid[30][30] = 1;
+    obs_grid[31][30] = 1;
+    obs_grid[32][30] = 1;
+    obs_grid[30][31] = 1;
+    obs_grid[30][32] = 1;
+    obs_grid[31][31] = 1;
+    obs_grid[31][32] = 1;
+    obs_grid[32][31] = 1;
+    obs_grid[32][32] = 1;
 
     fog_of_war_t.create(width, height);
     fog_of_war_t.setSmooth(false);
     fog_of_war_s = sf::Sprite(fog_of_war_t.getTexture());
     fog_of_war_s.setPosition(0, 0);
-    initializeFOG();
 
     lightmap.setTexture(fog_of_war_t.getTexture());
     lightTexture.loadFromFile("Assets/light.png");
@@ -134,20 +169,13 @@ void PotentialMap::render(sf::RenderWindow* window) {
 
 void PotentialMap::update(float timestep) {
 
-    //for (int i = 450; i < 550; i++) {
-        //for (int j = 0; j < 600; j++) {
-            //grid[i][j] = -500;
-        //}
-    //}
-
-
 
     static float t = 0;
     t += timestep;
     if (t > 15.0f) t = 15.0f;
     bool er = false;
     float posi = (float)rand()/RAND_MAX;
-    while (posi > (1.0 - 0.3*timestep*60) && t < 5.0f) {
+    while (posi > (1.0 - 0.3*timestep*60) && t < 10.0f) {
         er = true;
         float bx = (float)rand()/RAND_MAX;
         bx *= 800;
@@ -163,7 +191,12 @@ void PotentialMap::update(float timestep) {
         i->update(timestep);
     }
     for (auto &i : boids) {
-        i->calculate_forces(&boids, this->calculatePotentialFieldForce(i->getPosition()));
+        if (i->getPFID() != 0) {
+            i->calculate_forces(&boids, this->calculatePotentialFieldForce(i->getPosition(),i->getGrid()));
+        } else {
+            i->calculate_forces(&boids, this->calculatePotentialFieldForce(i->getPosition(), shade));
+        }
+        calculate_obs_dir(i);
         i->update(timestep);
     }
 
@@ -183,17 +216,45 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
 
     for (int i = 0; i < h_size; i++) {
         for (int j = 0; j < w_size; j++) {
-            grid[i][j] = -127;
-            int dis = manhattonDistance(j, i, gridlocation.x, gridlocation.y);
-            int light = 128 - dis*5;
+            int dis = (j - gridlocation.x)*(j-gridlocation.x) + (i-gridlocation.y) *(i-gridlocation.y);
+            int light = 128 - dis/5;
             grid[i][j] = light;
         }
     }
 
     for (auto &i : boids) {
-        i->setActive(true);
+        if (i->getSelected()) {
+            i->setActive(true);
+        }
         i->setDestination(pos);
     }
+
+    for (int i = 0; i < h_size; i++) {
+        for (int j = 0; j < w_size; j++) {
+            if (obs_grid[i][j] == 1) {
+                for (int ii = 0; ii < h_size; ii++) {
+                    for (int jj = 0; jj < w_size; jj++) {
+                        int dis = (jj-j)*(jj-j) + (ii - i)* (ii - i);
+                        if (dis < 25) {
+                            grid[ii][jj] -= (25-dis);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    PotentialField* cur_pf = new PotentialField(w_size, h_size);
+    cur_pf->loadGrid(grid);
+    cur_pf->generatePF();
+
+    for (auto &i : boids) {
+        if (i->getSelected()) {
+            i->loadPF(cur_pf, pfid_count);
+        }
+    }
+    pfid_count += 1;
 
 }
 
@@ -228,8 +289,9 @@ bool PotentialMap::testValidGridIndex(sf::Vector2i index) {
 }
 
 
-sf::Vector2f PotentialMap::calculatePotentialFieldForce(sf::Vector2f pos) {
+sf::Vector2f PotentialMap::calculatePotentialFieldForce(sf::Vector2f pos, int** grid) {
     sf::Vector2i gridIndex = getGridIndex(pos);
+
     
     static int directs[16] = {-1, 0, -1, 1, 0, 1, 1, 1, 1, 0, 1, -1, 0, -1, -1, -1};
 
@@ -260,6 +322,23 @@ sf::Vector2f PotentialMap::calculatePotentialFieldForce(sf::Vector2f pos) {
 }
 
 
+
+void PotentialMap::calculate_obs_dir(Boid* b) {
+    sf::Vector2i gridIndex = getGridIndex(b->getPosition());
+    static int directs[16] = {-1, 0, -1, 1, 0, 1, 1, 1, 1, 0, 1, -1, 0, -1, -1, -1};
+    if (!testValidGridIndex(gridIndex)) {
+        return;
+    }
+    for (int i = 0; i < 16; i+=2) {
+        if (testValidGridIndex(sf::Vector2i(gridIndex.x + directs[i], gridIndex.y + directs[i+1]))) {
+            if (obs_grid[gridIndex.y + directs[i+1]][gridIndex.x + directs[i]] == 1) {
+                b->limitForceDir(sf::Vector2f(directs[i], directs[i+1]));
+            }
+        }
+    }
+}
+
+
 void PotentialMap::updateFOG() {
     fog_of_war_t.clear(sf::Color(100.0f, 100.0f, 100.0f, 180.0f));
 
@@ -278,17 +357,17 @@ void PotentialMap::updateFOG() {
 }
 
 
-void PotentialMap::initializeFOG() {
-    int p_width = (float)(this->p_width);
-    int p_height = (float)(this->p_height);
-    static sf::Uint8* fogb = new sf::Uint8[p_width * p_height * 4];
-    for (int i = 0; i < p_width; i++) {
-        for (int j = 0; j < p_height; j++ ) {
-            fogb[4*j*p_width + 4*i] = 0;
-            fogb[4*j*p_width + 4*i + 1] = 0;
-            fogb[4*j*p_width + 4*i + 2] = 0;
-            fogb[4*j*p_width + 4*i + 3] = 0;
+
+void PotentialMap::selectBoids(sf::Vector2f pos, sf::Vector2f size) {
+
+    for (auto &i : boids) {
+        i->setSelected(false);
+    
+        sf::Vector2f ipos = i->getPosition();
+        if (ipos.x > pos.x && ipos.y > pos.y && ipos.x - pos.x < size.x && ipos.y - pos.y < size.y) {
+        
+            i->setSelected(true);
         }
     }
-    //fog_of_war_t.update(fogb);
+
 }

@@ -4,6 +4,7 @@
 #include <cmath>
 #include "utility.h"
 #include "Boid.h"
+#include "PotentialField.h"
 
 
 Boid::Boid(float xpos, float ypos) {
@@ -11,12 +12,21 @@ Boid::Boid(float xpos, float ypos) {
     location = sf::Vector2f(xpos, ypos);
     speed = sf::Vector2f(0,0);
     force = sf::Vector2f(0,0);
-    max_speed = 50;
+    max_speed = 20;
     max_force = 100;
     isActive = false;
+    isSelected = false;
+    pfid = 0;
 
 }
 
+void Boid::setSelected(bool b) {
+    isSelected = b;
+}
+
+bool Boid::getSelected() {
+    return isSelected;
+}
 
 void Boid::setActive(bool b) {
     isActive = b;
@@ -24,6 +34,20 @@ void Boid::setActive(bool b) {
 
 bool Boid::getActiveState() {
     return isActive;
+}
+
+void Boid::loadPF(PotentialField* p, int pid) {
+    field = p;
+    pfid = pid;
+}
+
+int Boid::getPFID() {
+    return pfid;
+}
+
+
+int** Boid::getGrid() {
+    return field->getGrid();
 }
 
 
@@ -62,11 +86,27 @@ void Boid::update(float timestep) {
 }
 
 
+void Boid::limitForceDir(sf::Vector2f dir) {
+    if (force.x * dir.x > 0) {
+        force.x = 0;
+    }
+    if (speed.x * dir.x > 0) {
+        speed.x = 0;
+    }
+    if (force.y * dir.y > 0) {
+        force.y = 0;
+    }
+    if (speed.y * dir.y > 0) {
+        speed.y = 0;
+    }
+}
+
+
 void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
     pf = dir;
     force = sf::Vector2f(0, 0);
     // Calculate separation force
-    float sep = 25;
+    float sep = 5;
     sf::Vector2f sep_force(0, 0);
     int count = 0;
     for (auto &i : *boids) {
@@ -84,59 +124,42 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
         sep_force = sep_force/(float) count;
     }
 
-    //if (abs(sep_force.x) > 0 || abs(sep_force.y) > 0) {
-        //float sz = sqrt(sep_force.x * sep_force.x + sep_force.y + sep_force.y);
-        //if (sep_force.x != 0) {
-            //sep_force.x = sep_force.x/sz;
-        //}
-        //if (sep_force.y != 0) {
-            //sep_force.y = sep_force.y/sz;
-        //}
-        //sep_force *= max_speed;
-        //sep_force -= speed;
-        //sep_force = limitVector(sep_force, max_force);
-    
-    //}
 
 
     // Calculate alignment forces
-    float ndist = 50;
+    float ndist = 15;
     sf::Vector2f align_force(0,0);
     count = 0;
     int account = 0;
+    int scount = 0;
     for (auto &i : *boids) {
         float dis = this->getDistance(i);
         if (dis > 0 && dis < ndist) {
-            if (!i->getActiveState()) {
-                account += 1;
+            if (i->getPFID() == pfid) {
+                if (!i->getActiveState()) {
+                    account += 1;
+                }
+                scount += 1;
             }
+
             align_force += limitVector(i->getSpeed(), 1);
             count ++;
         }
     }
 
-    if (account > count/2) {
+    if (account > scount/2) {
         isActive = false;
     }
 
     if (count > 0) {
         align_force = align_force/(float) count;
-        //float sz = sqrt(align_force.x * align_force.x + align_force.y * align_force.y);
-        //if (align_force.x != 0) {
-            //align_force.x = align_force.x / sz;
-        //}
-        //if (align_force.y != 0) {
-            //align_force.y = align_force.y / sz;
-        //}
-        //align_force *= max_speed;
-        //align_force = align_force - speed;
-        //align_force = limitVector(align_force, max_force);
+
     }
 
 
 
     // Calculate cohesion forces
-    ndist = 50;
+    ndist = 15;
     sf::Vector2f cohesion_force(0, 0);
     count = 0;
 
@@ -151,34 +174,23 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
 
     if (count > 0) {
         cohesion_force = cohesion_force/(float)count;        
-        //float sz = sqrt(cohesion_force.x * cohesion_force.x + cohesion_force.y * cohesion_force.y);
-        //if (cohesion_force.x != 0) {
-            //cohesion_force.x = cohesion_force.x/sz;
-        //}
-        //if (cohesion_force.y != 0) {
-            //cohesion_force.y = cohesion_force.y/sz;
-        //}
-        //cohesion_force *= max_speed;
-        //cohesion_force = cohesion_force - speed;
-        //cohesion_force = limitVector(cohesion_force, max_force);
+
     }
 
 
     // Calculate Destination force
     sf::Vector2f dest_force = dir;
-    //dest_force *= max_speed;
-    //dest_force = dest_force - speed;
-    //dest_force = limitVector(dest_force, max_force);
 
 
-    force += 1.5f * sep_force;
+
+    force += 5.5f * sep_force;
     if (isActive) {
-        force += 4.0f * sep_force;
+        force -= 2.0f * sep_force;
         force += 0.005f * align_force;
         force += 0.1f * cohesion_force;
-        force += 0.05f * dest_force;
+        force += 0.3f * dest_force;
     }
-    force *= 1000.0f;
+    force *= 100.0f;
 
 
     
@@ -202,26 +214,6 @@ float Boid::getDistance(Boid* b) {
 
 }
 
-void Boid::renderFOG(sf::RenderTexture* t) {
-
-    //sf::Texture lightTexture;
-    //sf::Sprite light;
-    //sf::Sprite lightmap;
-
-    //lightmap.setTexture((*t).getTexture());
-    //lightTexture.loadFromFile("Assets/light.png");
-    //lightTexture.setSmooth(true);
-
-    //light.setTexture(lightTexture);
-    //light.setTextureRect(sf::IntRect(0, 0, 50, 50));
-    //light.setOrigin(25.f, 25.f);
-    //light.setColor(sf::Color::White);
-    //light.setPosition(location);
-    //(*t).draw(light, sf::BlendAdd);
-
-}
-
-
 void Boid::render(sf::RenderWindow* window) {
     static sf::CircleShape sh(5.0f);
     static sf::RectangleShape rect(location);
@@ -231,6 +223,9 @@ void Boid::render(sf::RenderWindow* window) {
     rect.setSize(sf::Vector2f(5.0f, 5.0f));
     rect.setOrigin(2.5f, 2.5f);
     rect.setFillColor(sf::Color(180, 20, 50));
+    if (isSelected) {
+        rect.setFillColor(sf::Color(255, 255, 255, 255));
+    }
     rect.setPosition(location);
     (*window).draw(rect);
     sf::Vertex line[2];

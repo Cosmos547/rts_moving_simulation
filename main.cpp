@@ -104,8 +104,11 @@ int main()
             rect.setOutlineThickness(2.0);
             rect.setOutlineColor(sf::Color(102, 204, 255, 95));
             window.draw(rect);
+            
+            pm->selectBoids(sf::Vector2f(holdMouseE.x < holdMouseS.x ? holdMouseE.x : holdMouseS.x, holdMouseE.y < holdMouseS.y ? holdMouseE.y : holdMouseS.y), sf::Vector2f(abs(holdMouseE.x - holdMouseS.x), abs(holdMouseE.y - holdMouseS.y)));
         } else {
             leftMouseDown = false;
+            
         }
 
         window.setView(minimap);

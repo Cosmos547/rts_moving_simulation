@@ -17,10 +17,11 @@ class PotentialMap {
         void setDestinationGrid(sf::Vector2f pos);
         sf::Vector2i getGridIndex(sf::Vector2f pos);
         void setGatherPoint(float x, float y);
-        sf::Vector2f calculatePotentialFieldForce(sf::Vector2f pos);
+        sf::Vector2f calculatePotentialFieldForce(sf::Vector2f pos, int** grid);
         bool testValidGridIndex(sf::Vector2i index);
-        void initializeFOG();
         void updateFOG();
+        void calculate_obs_dir(Boid* b);
+        void selectBoids(sf::Vector2f pos, sf::Vector2f size);
 
     private:
         float p_width;
@@ -33,8 +34,11 @@ class PotentialMap {
         float gather_y;
         std::vector<SceneObject*> sobjs;
         int** grid;
+        int** obs_grid;
+        int** shade;
         void renderGrid(sf::RenderWindow* window);
         bool renderPotentialMap;
+        int pfid_count;
         sf::Texture pmapT;
         sf::Sprite pmapS;
 
