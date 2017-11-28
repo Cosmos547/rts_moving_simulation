@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "PotentialMap.h"
 #include "SceneObject.h"
+#include "SceneTexture.h"
 #include "WaterFountain.h"
 #include "utility.h"
 
@@ -39,6 +40,25 @@ PotentialMap* generateMapFromFile(std::string filename) {
                 }
                 else if (tokens[0] == "b") {
                     pf->boids.push_back(new Boid(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str())));
+                }
+                else if (tokens[0] == "wf") {
+                    float x_pos = std::atoi(tokens[1].c_str());
+                    float y_pos = std::atoi(tokens[2].c_str());
+                    float w = std::atoi(tokens[3].c_str());
+                    float h = std::atoi(tokens[4].c_str());
+                    pf->sobjs.push_back(new WaterFountain(x_pos, y_pos, w, h));
+                }
+                else if (tokens[0] == "st") {
+                    float x_pos = std::atoi(tokens[1].c_str());
+                    float y_pos = std::atoi(tokens[2].c_str());
+                    float w = std::atoi(tokens[3].c_str());
+                    float h = std::atoi(tokens[4].c_str());
+                    std::string asset = tokens[5];
+                    float o_x = std::atoi(tokens[6].c_str());
+                    float o_y = std::atoi(tokens[7].c_str());
+                    float o_w = std::atoi(tokens[8].c_str());
+                    float o_h = std::atoi(tokens[9].c_str());
+                    pf->sobjs.push_back(new SceneTexture(x_pos, y_pos, w, h, asset));
                 }
                 
             }

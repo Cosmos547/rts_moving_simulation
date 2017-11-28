@@ -25,10 +25,10 @@ WaterFountain::WaterFountain(float xpos, float ypos, float xsize, float ysize) :
 void WaterFountain::render(sf::RenderWindow* window) {
     // Render the base of the water fountain
     this->cir.setPointCount(50);
-    this->cir.setPosition(x_cen-radius/4.0f, y_cen);
+    this->cir.setPosition(x_cen-radius/2.0f, y_cen);
     this->cir.setFillColor(sf::Color(102, 204, 255));
     this->cir.setScale(1.0, 0.8);
-    this->cir.setRadius(radius/4.0);
+    this->cir.setRadius(radius/2.0);
     (*window).draw(cir);
 
     // Render the individual particles

@@ -14,3 +14,15 @@ b 160 200
 b 170 200
 b 180 200
 b 190 200
+
+
+wf 200 200 200 200
+st 100 200 63 89 Assets/tree.png 0 40 63 40
+st 200 200 63 89 Assets/tree.png 0 40 63 40
+st 300 200 63 89 Assets/tree.png 0 40 63 40
+st 400 200 63 89 Assets/tree.png 0 40 63 40
+st 500 200 63 89 Assets/tree.png 0 40 63 40
+st 100 300 63 89 Assets/tree.png 0 40 63 40
+st 100 400 63 89 Assets/tree.png 0 40 63 40
+st 100 500 63 89 Assets/tree.png 0 40 63 40
+st 200 300 63 89 Assets/tree.png 0 40 63 40

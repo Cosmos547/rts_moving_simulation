@@ -80,17 +80,7 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
 
     renderPotentialMap = true;
 
-    sobjs.push_back(new WaterFountain(200, 200, 200, 200));
-    sobjs.push_back(new SceneTexture(100, 200, 190/3, 269/3, "Assets/tree.png"));
-    obs_grid[30][30] = 1;
-    obs_grid[31][30] = 1;
-    obs_grid[32][30] = 1;
-    obs_grid[30][31] = 1;
-    obs_grid[30][32] = 1;
-    obs_grid[31][31] = 1;
-    obs_grid[31][32] = 1;
-    obs_grid[32][31] = 1;
-    obs_grid[32][32] = 1;
+
 
     fog_of_war_t.create(width, height);
     fog_of_war_t.setSmooth(false);
@@ -139,6 +129,7 @@ void PotentialMap::render(sf::RenderWindow* window) {
     if (renderPotentialMap) {
         renderGrid(window);
     }
+
     for (auto &i : sobjs) {
         i->render(window);
     }
