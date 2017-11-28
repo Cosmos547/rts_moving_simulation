@@ -25,6 +25,8 @@ class PotentialMap {
 
         std::vector<SceneObject*> sobjs;
 
+        std::vector<Boid*> boids;
+
     private:
         float p_width;
         float p_height;
@@ -49,7 +51,6 @@ class PotentialMap {
 
         sf::Texture backgroundT;
         sf::Sprite backgroundS;
-        std::vector<Boid*> boids;
 
 
         sf::RenderTexture fog_of_war_t;

@@ -37,6 +37,9 @@ PotentialMap* generateMapFromFile(std::string filename) {
                 if (tokens[0] == "grid") {
                     pf = new PotentialMap(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()), std::atoi(tokens[4].c_str()));
                 }
+                else if (tokens[0] == "b") {
+                    pf->boids.push_back(new Boid(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str())));
+                }
                 
             }
         }

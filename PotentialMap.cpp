@@ -106,24 +106,7 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     light.setColor(sf::Color::White);
     light.setScale(0.5f, 0.5f);
 
-    boids.push_back(new Boid(200, 100));
-    boids.push_back(new Boid(210, 100));
-    boids.push_back(new Boid(220, 100));
-    boids.push_back(new Boid(230, 100));
-    boids.push_back(new Boid(240, 100));
-    boids.push_back(new Boid(250, 100));
-    boids.push_back(new Boid(260, 100));
-    boids.push_back(new Boid(270, 100));
-    boids.push_back(new Boid(280, 100));
-    boids.push_back(new Boid(290, 100));
-    boids.push_back(new Boid(200, 110));
-    boids.push_back(new Boid(200, 120));
-    boids.push_back(new Boid(200, 130));
-    boids.push_back(new Boid(200, 140));
-    boids.push_back(new Boid(200, 150));
-    boids.push_back(new Boid(200, 160));
-    boids.push_back(new Boid(200, 170));
-    boids.push_back(new Boid(200, 180));
+
 
 
 
