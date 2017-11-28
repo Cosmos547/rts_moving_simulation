@@ -78,7 +78,7 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
 
 
 
-    //renderPotentialMap = true;
+    renderPotentialMap = true;
 
     sobjs.push_back(new WaterFountain(200, 200, 200, 200));
     sobjs.push_back(new SceneTexture(100, 200, 190/3, 269/3, "Assets/tree.png"));
@@ -178,10 +178,10 @@ void PotentialMap::update(float timestep) {
     while (posi > (1.0 - 0.3*timestep*60) && t < 10.0f) {
         er = true;
         float bx = (float)rand()/RAND_MAX;
-        bx *= 800;
+        bx *= 600;
         float by = (float)rand()/RAND_MAX;
         by *= 100;
-        boids.push_back(new Boid(bx, by));
+        boids.push_back(new Boid(bx+50, by+100));
         posi -= 1;
         if (t > 10.0f) {
             boids.erase(boids.begin());
@@ -225,8 +225,8 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
     for (auto &i : boids) {
         if (i->getSelected()) {
             i->setActive(true);
+            i->setDestination(pos);
         }
-        i->setDestination(pos);
     }
 
     for (int i = 0; i < h_size; i++) {

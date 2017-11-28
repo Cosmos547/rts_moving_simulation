@@ -23,6 +23,8 @@ class PotentialMap {
         void calculate_obs_dir(Boid* b);
         void selectBoids(sf::Vector2f pos, sf::Vector2f size);
 
+        std::vector<SceneObject*> sobjs;
+
     private:
         float p_width;
         float p_height;
@@ -32,7 +34,6 @@ class PotentialMap {
         float h_pixel;
         float gather_x;
         float gather_y;
-        std::vector<SceneObject*> sobjs;
         int** grid;
         int** obs_grid;
         int** shade;

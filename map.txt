@@ -1,0 +1,4 @@
+
+# Comments in this file starts with #
+
+grid 1600 1200 80 60

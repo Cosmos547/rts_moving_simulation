@@ -77,7 +77,7 @@ sf::Vector2f Boid::getSpeed() {
 }
 
 void Boid::update(float timestep) {
-    if (abs(desti.x - location.x) + abs(desti.y - location.y) < 50.0f) {
+    if (abs(desti.x - location.x) + abs(desti.y - location.y) < 15.0f) {
         isActive = false;
     }
     calculate_speed(timestep);
