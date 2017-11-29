@@ -47,6 +47,7 @@ PotentialMap* generateMapFromFile(std::string filename) {
                     float w = std::atoi(tokens[3].c_str());
                     float h = std::atoi(tokens[4].c_str());
                     pf->sobjs.push_back(new WaterFountain(x_pos, y_pos, w, h));
+                    pf->setObs(x_pos + w/4, y_pos + h/2, w/2, h/2);
                 }
                 else if (tokens[0] == "st") {
                     float x_pos = std::atoi(tokens[1].c_str());
@@ -59,6 +60,7 @@ PotentialMap* generateMapFromFile(std::string filename) {
                     float o_w = std::atoi(tokens[8].c_str());
                     float o_h = std::atoi(tokens[9].c_str());
                     pf->sobjs.push_back(new SceneTexture(x_pos, y_pos, w, h, asset));
+                    pf->setObs(x_pos + o_x, y_pos + o_y, o_w, o_h);
                 }
                 
             }

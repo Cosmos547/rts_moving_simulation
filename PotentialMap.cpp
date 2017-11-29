@@ -21,11 +21,11 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
         }
     }
 
-    shade = new int*[h];
+    shade = new float*[h];
     for(int i = 0; i < h; i++) {
-        shade[i] = new int[w];
+        shade[i] = new float[w];
         for (int j = 0; j < w; j++) {
-            shade[i][j] = 0;
+            shade[i][j] = 0.0f;
         }
     }
 
@@ -136,8 +136,8 @@ void PotentialMap::render(sf::RenderWindow* window) {
     for (auto &i : boids) {
         i->render(window);
     }
-    updateFOG();
-    (*window).draw(fog_of_war_s, sf::BlendMultiply);
+    //updateFOG();
+    //(*window).draw(fog_of_war_s, sf::BlendMultiply);
 }
 
 
@@ -168,7 +168,7 @@ void PotentialMap::update(float timestep) {
         if (i->getPFID() != 0) {
             i->calculate_forces(&boids, this->calculatePotentialFieldForce(i->getPosition(),i->getGrid()));
         } else {
-            i->calculate_forces(&boids, this->calculatePotentialFieldForce(i->getPosition(), shade));
+            i->calculate_forces(&boids, this->calculatePotentialFieldForce(i->getPosition(), obs_grid));
         }
         calculate_obs_dir(i);
         i->update(timestep);
@@ -193,6 +193,7 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
             int dis = (j - gridlocation.x)*(j-gridlocation.x) + (i-gridlocation.y) *(i-gridlocation.y);
             int light = 128 - dis/5;
             grid[i][j] = light;
+            shade[i][j] = 0;
         }
     }
 
@@ -209,8 +210,11 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
                 for (int ii = 0; ii < h_size; ii++) {
                     for (int jj = 0; jj < w_size; jj++) {
                         int dis = (jj-j)*(jj-j) + (ii - i)* (ii - i);
-                        if (dis < 25) {
-                            grid[ii][jj] -= (25-dis);
+                        if (dis > 0 && dis < 25) {
+                            shade[ii][jj] -= 80.0f/dis;
+                        }
+                        if (dis == 0) {
+                            shade[ii][jj] -= 80;
                         }
                     }
                 }
@@ -218,6 +222,45 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
         }
     }
 
+    //for (int i = 1; i < h_size-1; i++) {
+        //for (int j = 1; j < w_size-1; j++) {
+            //int cc = 0;
+            //for (int ii = -1; ii <= 1; ii++) {
+                //for (int jj = -1; jj<=1; jj++) {
+                    //if (shade[i+ii][j+jj] < 0) {
+                        //cc += 1;
+                    //}
+                //}
+            //}
+            //if (cc >= 3) {
+                //shade[i][j] -= 20;
+            //}
+        //}
+    //}
+
+    //for (int i = 0; i < h_size; i++) {
+        //for (int j = 0; j < w_size; j++) {
+            //grid[i][j] += (int)shade[i][j];
+        //}
+    //}
+
+    for (int i = 1; i < h_size-1; i++) {
+        for (int j = 1; j < w_size-1; j++) {
+            if (shade[i][j] == 0) {
+                continue;
+            }
+            if (shade[i][j-1] < shade[i][j] && shade[i][j+1] < shade[i][j] && obs_grid[i][j] != 1) {
+                //grid[i][j] += -20;
+            }
+            else if (shade[i-1][j] < shade[i][j] && shade[i+1][j] < shade[i][j] && obs_grid[i][j] != 1) {
+                //grid[i][j] += -20;
+            }
+            else {
+                grid[i][j] += (int)shade[i][j];
+                std::cout << "shade " << shade[i][j] << std::endl;
+            }
+        }
+    }
 
     PotentialField* cur_pf = new PotentialField(w_size, h_size);
     cur_pf->loadGrid(grid);
@@ -341,6 +384,19 @@ void PotentialMap::selectBoids(sf::Vector2f pos, sf::Vector2f size) {
         if (ipos.x > pos.x && ipos.y > pos.y && ipos.x - pos.x < size.x && ipos.y - pos.y < size.y) {
         
             i->setSelected(true);
+        }
+    }
+
+}
+
+
+void PotentialMap::setObs(float x, float y, float w, float h) {
+    sf::Vector2i tlg = getGridIndex({x, y});
+    sf::Vector2i brg = getGridIndex({x+w, y+h});
+
+    for (int i = tlg.x; i < brg.x; i++) {
+        for (int j = tlg.y; j < brg.y; j++) {
+            obs_grid[j][i] = 1;
         }
     }
 

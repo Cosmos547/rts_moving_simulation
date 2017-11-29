@@ -39,7 +39,7 @@ class PotentialMap {
         float gather_y;
         int** grid;
         int** obs_grid;
-        int** shade;
+        float** shade;
         void renderGrid(sf::RenderWindow* window);
         bool renderPotentialMap;
         int pfid_count;
