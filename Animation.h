@@ -5,18 +5,19 @@
 #include <stdlib.h>
 #include <cmath>
 
-enum class Dir {UL, U, UR, L, S, R, DL, D, DR};
 
 class Animation {
     public:
         Animation();
         void update(float elapsedTime);
-        void render(sf::RenderWindow* window, Dir dir);
+        void render(sf::RenderWindow* window, float xpos, float ypos, float angle, float size, sf::Vector2f speed);
 
     private:
         float time;
         int frame;
         sf::Texture* t;
         sf::Sprite* s;
+        std::vector<sf::IntRect> txs;
+
 
 };

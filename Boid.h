@@ -11,9 +11,9 @@
 class Boid {
     public:
         Boid(float xpos, float ypos);
-        void update(float timestep);
+        virtual void update(float timestep);
         void calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir);
-        void render(sf::RenderWindow* window);
+        virtual void render(sf::RenderWindow* window);
         float getDistance(Boid* b);
         float getOrientation();
         sf::Vector2f getPosition();
@@ -30,15 +30,18 @@ class Boid {
         int** getGrid();
 
 
-    private:
+    protected:
         void calculate_speed(float timestep);
         void update_position(float timestep);
         float max_speed;
         float max_force;
+        float orientation;
         sf::Vector2f location;
         sf::Vector2f speed;
         sf::Vector2f force;
         sf::Vector2f pf;
+
+        float size;
 
         PotentialField* field;
         int pfid;

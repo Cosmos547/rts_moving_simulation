@@ -13,7 +13,7 @@ int main()
     float elapsedTime;
     PotentialMap* pm = generateMapFromFile("map.txt");
 
-    //window.setVerticalSyncEnabled(true);
+    window.setVerticalSyncEnabled(true);
 
     sf::View view(sf::FloatRect(0,0,800,600));
     sf::View minimap(sf::FloatRect(0, 0, 800, 600));

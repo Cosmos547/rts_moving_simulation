@@ -8,6 +8,8 @@
 #include "utility.h"
 #include "Boid.h"
 #include <time.h>
+#include "Animation.h"
+#include "AnimationBoid.h"
 
 
 PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(width), p_height(height), w_size(w), h_size(h) {
@@ -97,7 +99,13 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     light.setScale(0.5f, 0.5f);
 
 
-
+    boids.push_back(new AnimationBoid(200, 200, new Animation()));
+    boids.push_back(new AnimationBoid(250, 200, new Animation()));
+    boids.push_back(new AnimationBoid(300, 200, new Animation()));
+    boids.push_back(new AnimationBoid(400, 200, new Animation()));
+    boids.push_back(new AnimationBoid(350, 200, new Animation()));
+    boids.push_back(new AnimationBoid(450, 200, new Animation()));
+    boids.push_back(new AnimationBoid(200, 250, new Animation()));
 
 
 }
@@ -149,7 +157,7 @@ void PotentialMap::update(float timestep) {
     if (t > 15.0f) t = 15.0f;
     bool er = false;
     float posi = (float)rand()/RAND_MAX;
-    while (posi > (1.0 - 0.3*timestep*60) && t < 10.0f) {
+    while (posi > (1.0 - 0.3*timestep*60) && t < 0.0f) {
         er = true;
         float bx = (float)rand()/RAND_MAX;
         bx *= 600;
@@ -257,7 +265,6 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
             }
             else {
                 grid[i][j] += (int)shade[i][j];
-                std::cout << "shade " << shade[i][j] << std::endl;
             }
         }
     }

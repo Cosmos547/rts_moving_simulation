@@ -17,6 +17,8 @@ Boid::Boid(float xpos, float ypos) {
     isActive = false;
     isSelected = false;
     pfid = 0;
+    orientation = 270.0f;
+    size = 5.0f;
 
 }
 
@@ -77,7 +79,7 @@ sf::Vector2f Boid::getSpeed() {
 }
 
 void Boid::update(float timestep) {
-    if (abs(desti.x - location.x) + abs(desti.y - location.y) < 15.0f) {
+    if (abs(desti.x - location.x) + abs(desti.y - location.y) < size*2) {
         isActive = false;
     }
     calculate_speed(timestep);
@@ -106,7 +108,7 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
     pf = dir;
     force = sf::Vector2f(0, 0);
     // Calculate separation force
-    float sep = 5;
+    float sep = size*2;
     sf::Vector2f sep_force(0, 0);
     int count = 0;
     for (auto &i : *boids) {
@@ -114,8 +116,8 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
         if (dis > 0 && dis < sep) {
             sf::Vector2f opos = i->getPosition();
             float ang = atan2(opos.y - location.y, opos.x - location.x);
-            sep_force.x += -cos(ang)/dis;
-            sep_force.y += -sin(ang)/dis;
+            sep_force.x += -cos(ang)/(dis/2);
+            sep_force.y += -sin(ang)/(dis/2);
             count++;
         }
     }
@@ -201,6 +203,11 @@ void Boid::calculate_speed(float timestep) {
     speed = speed - timestep*speed;
     speed += force*timestep;
     speed = limitVector(speed, max_speed);
+
+    orientation = atan2(speed.y, speed.x) * 180 / 3.14159265;
+    if (orientation < 0) {
+        orientation += 360;
+    }
 }
 
 
@@ -217,11 +224,11 @@ float Boid::getDistance(Boid* b) {
 void Boid::render(sf::RenderWindow* window) {
     static sf::CircleShape sh(5.0f);
     static sf::RectangleShape rect(location);
-    sh.setRadius(5.0f);
+    sh.setRadius(size);
     sh.setOrigin(sh.getRadius(), sh.getRadius());
     sh.setPosition(location);
-    rect.setSize(sf::Vector2f(5.0f, 5.0f));
-    rect.setOrigin(2.5f, 2.5f);
+    rect.setSize(sf::Vector2f(size, size));
+    rect.setOrigin(size/2, size/2);
     rect.setFillColor(sf::Color(180, 20, 50));
     if (isSelected) {
         rect.setFillColor(sf::Color(255, 255, 255, 255));
