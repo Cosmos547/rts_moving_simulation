@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.12.2)  3 DEC 2017 00:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.12.3)  3 DEC 2017 17:44
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -6,7 +6,7 @@ entering extended mode
 **report.tex
 (./report.tex
 LaTeX2e <2016/02/01>
-Babel <3.9q> and hyphenation patterns for 3 language(s) loaded.
+Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo
@@ -50,15 +50,15 @@ LaTeX Font Info:    ... okay on input line 6.
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 460 strings out of 494953
- 5514 string characters out of 6180977
- 150160 words of memory out of 5000000
- 3815 multiletter control sequences out of 15000+600000
+ 460 strings out of 493029
+ 5514 string characters out of 6136234
+ 155001 words of memory out of 5000000
+ 4066 multiletter control sequences out of 15000+600000
  5496 words of font info for 20 fonts, out of 8000000 for 9000
- 14 hyphenation exceptions out of 8191
+ 1141 hyphenation exceptions out of 8191
  21i,4n,19p,210b,144s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on report.pdf (1 page, 46689 bytes).
+Output written on report.pdf (1 page, 46688 bytes).
 PDF statistics:
  20 PDF objects out of 1000 (max. 8388607)
  13 compressed objects within 1 object stream
