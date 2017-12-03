@@ -5,6 +5,8 @@ The project is written with `SFML2.4.2` and uses `premake4` to generate the make
 
 I've created a script to compile and run the program. Using the following commands to test the program.
 
+The project only works under Linux with `premake4` installed and is only tested on `Ubuntu 16.04 LTS`.
+
 ```
 $ ./configure
 $ ./run
@@ -19,7 +21,7 @@ $ LD_LIBRARY_PATH=./SFML-2.4.2/lib ./rts [some map txt]
 ```
 
 #### Manual
-- `SPACE` toggles the view for potential field
+- `SPACE` toggles the view for displaying potential field
 
 #### Objectives
 1. Interactive map with mini-map that will pan around and zoom base of the input of a mouse.
