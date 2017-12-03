@@ -6,12 +6,19 @@
 #include "PotentialMap.h"
 #include "utility.h"
 
-int main()
+int main(int argc, char *argv[])
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
     sf::Clock clock;
     float elapsedTime;
-    PotentialMap* pm = generateMapFromFile("map.txt");
+    PotentialMap* pm;
+    if (argc == 1) {
+        pm = generateMapFromFile("map.txt");
+    }
+    else {
+        std::string s(argv[1]);
+        pm = generateMapFromFile(s);
+    }
 
     window.setVerticalSyncEnabled(true);
 
@@ -56,6 +63,9 @@ int main()
                 //std::cout << "Wheel movement: " << event.mouseWheel.delta << std::endl;
                 //std::cout << "mouse x: " << event.mouseWheel.x << std::endl;
                 //std::cout << "mouse y: " << event.mouseWheel.y << std::endl;
+            }
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
+                pm->togglePotentialMap();
             }
             if (event.type == sf::Event::Closed)
                 window.close();

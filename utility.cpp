@@ -10,6 +10,8 @@
 #include "SceneObject.h"
 #include "SceneTexture.h"
 #include "WaterFountain.h"
+#include "AnimationBoid.h"
+#include "Animation.h"
 #include "utility.h"
 
 const int MAXLINE = 256;
@@ -28,18 +30,20 @@ PotentialMap* generateMapFromFile(std::string filename) {
             if (oneline.empty() || oneline[0] == '#') {
                 continue;
             } else {
-                std::cout << oneline << std::endl;
                 std::istringstream iss(oneline);
                 std::vector<std::string> tokens = split(oneline, ' ');
-                for (auto &i : tokens) {
-                    std::cout << i << std::endl;
-                }
 
                 if (tokens[0] == "grid") {
                     pf = new PotentialMap(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()), std::atoi(tokens[4].c_str()));
                 }
                 else if (tokens[0] == "b") {
                     pf->boids.push_back(new Boid(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str())));
+                }
+                else if (tokens[0] == "ab") {
+                    pf->boids.push_back(new AnimationBoid(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), new Animation(tokens[3])));
+                }
+                else if (tokens[0] == "fb") {
+                    pf->boids.push_back(new FlyingBoid(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str())));
                 }
                 else if (tokens[0] == "wf") {
                     float x_pos = std::atoi(tokens[1].c_str());

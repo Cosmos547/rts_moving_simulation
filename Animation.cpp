@@ -1,13 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <stdlib.h>
+#include <cmath>
 #include "Animation.h"
 
-Animation::Animation() {
+Animation::Animation(std::string assetName) {
     time = 0.0f;
     int frame = 0;
     t = new sf::Texture();
-    t->loadFromFile("Assets/Character_Hero_Archor.png");
+    t->loadFromFile(assetName);
     s = new sf::Sprite();
 
     s->setTexture(*t);
@@ -31,18 +32,19 @@ Animation::Animation() {
 }
 
 
-void Animation::update(float elapsedTime) {
-    time += elapsedTime;
-    while (time > 0.6f) {
-        time -= 0.6f;
+void Animation::update(float elapsedTime, sf::Vector2f speed) {
+    float vspeed = sqrt(speed.x * speed.x + speed.y * speed.y);
+    time += elapsedTime * vspeed;
+    while (time > 10) {
+        time -= 10;
     }
-    if (time < 0.15f) {
+    if (time < 2.5) {
         frame = 0;
     }
-    else if (time < 0.3f) {
+    else if (time < 5) {
         frame = 1;
     }
-    else if (time < 0.45) {
+    else if (time < 7.5) {
         frame = 2;
     }
     else {

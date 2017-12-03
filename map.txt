@@ -4,7 +4,23 @@
 grid 800 600 80 60
 
 
+ab 200 200 Assets/Character_Hero_Priest.png
+ab 250 200 Assets/Character_Hero_Warrior.png
+ab 350 200 Assets/Character_Hero_Priest.png
+ab 450 200 Assets/Character_Hero_Archor.png
+ab 250 300 Assets/Character_Monster_Boss.png
+ab 250 400 Assets/Character_Hero_Priest.png
+ab 250 250 Assets/Character_Hero_Priest.png
+ab 350 250 Assets/Character_Hero_Priest.png
+
 b 100 200
+
+fb 100 200
+fb 110 200
+fb 120 200
+fb 130 200
+fb 140 200
+
 
 
 

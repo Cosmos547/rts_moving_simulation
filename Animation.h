@@ -8,8 +8,8 @@
 
 class Animation {
     public:
-        Animation();
-        void update(float elapsedTime);
+        Animation(std::string assetName);
+        void update(float elapsedTime, sf::Vector2f speed);
         void render(sf::RenderWindow* window, float xpos, float ypos, float angle, float size, sf::Vector2f speed);
 
     private:

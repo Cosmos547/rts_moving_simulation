@@ -80,7 +80,7 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
 
 
 
-    renderPotentialMap = true;
+    renderPotentialMap = false;
 
 
 
@@ -97,21 +97,14 @@ PotentialMap::PotentialMap(float width, float height, int w, int h) : p_width(wi
     light.setOrigin(150.f, 150.f);
     light.setColor(sf::Color::White);
     light.setScale(0.5f, 0.5f);
-
-
-    boids.push_back(new AnimationBoid(200, 200, new Animation()));
-    boids.push_back(new AnimationBoid(250, 200, new Animation()));
-    boids.push_back(new AnimationBoid(300, 200, new Animation()));
-    boids.push_back(new AnimationBoid(400, 200, new Animation()));
-    boids.push_back(new AnimationBoid(350, 200, new Animation()));
-    boids.push_back(new AnimationBoid(450, 200, new Animation()));
-    boids.push_back(new AnimationBoid(200, 250, new Animation()));
-
-
 }
 
 PotentialMap::~PotentialMap() {
     free(grid);
+}
+
+void PotentialMap::togglePotentialMap() {
+    renderPotentialMap = !renderPotentialMap;
 }
 
 void PotentialMap::renderGrid(sf::RenderWindow* window) {
@@ -119,8 +112,8 @@ void PotentialMap::renderGrid(sf::RenderWindow* window) {
     for (int i = 0; i < h_size; i++) {
         for (int j = 0; j < w_size; j++) {
             pixels[i*w_size*4 + 4*j] = 0;
-            if (grid[i][j] >= -127){
-                pixels[i*w_size*4 + 4*j+1] = 127 + grid[i][j];
+            if (grid[i][j] + shade[i][j] >= -127){
+                pixels[i*w_size*4 + 4*j+1] = 127 + grid[i][j] + shade[i][j];
             } else {
                 pixels[i*w_size*4 + 4*j+1] = 0;
             }
@@ -144,31 +137,13 @@ void PotentialMap::render(sf::RenderWindow* window) {
     for (auto &i : boids) {
         i->render(window);
     }
-    //updateFOG();
-    //(*window).draw(fog_of_war_s, sf::BlendMultiply);
+    updateFOG();
+    (*window).draw(fog_of_war_s, sf::BlendMultiply);
 }
 
 
 void PotentialMap::update(float timestep) {
 
-
-    static float t = 0;
-    t += timestep;
-    if (t > 15.0f) t = 15.0f;
-    bool er = false;
-    float posi = (float)rand()/RAND_MAX;
-    while (posi > (1.0 - 0.3*timestep*60) && t < 0.0f) {
-        er = true;
-        float bx = (float)rand()/RAND_MAX;
-        bx *= 600;
-        float by = (float)rand()/RAND_MAX;
-        by *= 100;
-        boids.push_back(new Boid(bx+50, by+100));
-        posi -= 1;
-        if (t > 10.0f) {
-            boids.erase(boids.begin());
-        }
-    }
     for (auto &i : sobjs) {
         i->update(timestep);
     }
@@ -230,55 +205,32 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
         }
     }
 
-    //for (int i = 1; i < h_size-1; i++) {
-        //for (int j = 1; j < w_size-1; j++) {
-            //int cc = 0;
-            //for (int ii = -1; ii <= 1; ii++) {
-                //for (int jj = -1; jj<=1; jj++) {
-                    //if (shade[i+ii][j+jj] < 0) {
-                        //cc += 1;
-                    //}
-                //}
-            //}
-            //if (cc >= 3) {
-                //shade[i][j] -= 20;
-            //}
-        //}
-    //}
-
-    //for (int i = 0; i < h_size; i++) {
-        //for (int j = 0; j < w_size; j++) {
-            //grid[i][j] += (int)shade[i][j];
-        //}
-    //}
-
-    for (int i = 1; i < h_size-1; i++) {
-        for (int j = 1; j < w_size-1; j++) {
-            if (shade[i][j] == 0) {
-                continue;
-            }
-            if (shade[i][j-1] < shade[i][j] && shade[i][j+1] < shade[i][j] && obs_grid[i][j] != 1) {
-                //grid[i][j] += -20;
-            }
-            else if (shade[i-1][j] < shade[i][j] && shade[i+1][j] < shade[i][j] && obs_grid[i][j] != 1) {
-                //grid[i][j] += -20;
-            }
-            else {
-                grid[i][j] += (int)shade[i][j];
-            }
-        }
-    }
 
     PotentialField* cur_pf = new PotentialField(w_size, h_size);
     cur_pf->loadGrid(grid);
+    cur_pf->loadShade(shade);
     cur_pf->generatePF();
+
+    PotentialField* air_pf = new PotentialField(w_size, h_size);
+    air_pf->loadGrid(grid);
+    air_pf->generatePF();
 
     for (auto &i : boids) {
         if (i->getSelected()) {
-            i->loadPF(cur_pf, pfid_count);
+            if (i->getBoidType() == 0) {
+                i->loadPF(cur_pf, pfid_count);
+            }
+            if (i->getBoidType() == 1) {
+                i->loadPF(air_pf, pfid_count+1);
+            }
         }
     }
-    pfid_count += 1;
+    pfid_count += 2;
+
+
+    if (pfid_count > 10000) {
+        pfid_count = 1;
+    }
 
 }
 
@@ -287,15 +239,23 @@ void PotentialMap::renderMinimap(sf::RenderWindow* window) {
     static sf::Uint8* pixels = new sf::Uint8[w_size * h_size * 4];
     for (int i = 0; i < h_size; i++) {
         for (int j = 0; j < w_size; j++) {
-            pixels[i*w_size*4 + 4*j] = 0;
-            if (grid[i][j] >= -127){
-                pixels[i*w_size*4 + 4*j+1] = 127 + grid[i][j];
+            if (obs_grid[i][j] == 1){
+                pixels[i*w_size*4 + 4*j] = 255;
+                pixels[i*w_size*4 + 4*j+1] = 255;
+                pixels[i*w_size*4 + 4*j+2] = 255;
             } else {
-                pixels[i*w_size*4 + 4*j+1] = 0;
+                pixels[i*w_size*4 + 4*j] = 0;
+                pixels[i*w_size*4 + 4*j+1] = 127;
+                pixels[i*w_size*4 + 4*j+2] = 0;
             }
-            pixels[i*w_size*4 + 4*j+2] = 0;
             pixels[i*w_size*4 + 4*j+3] = 255;
         }
+    }
+    for (auto &i : boids) {
+        sf::Vector2i pp = getGridIndex(i->getPosition());
+        pixels[pp.y*w_size*4 + 4*pp.x] = 255;
+        pixels[pp.y*w_size*4 + 4*pp.x + 1] = 0;
+        pixels[pp.y*w_size*4 + 4*pp.x + 2] = 0;
     }
     minimapT.update(pixels);
     (*window).draw(minimapS);
@@ -355,7 +315,7 @@ void PotentialMap::calculate_obs_dir(Boid* b) {
     }
     for (int i = 0; i < 16; i+=2) {
         if (testValidGridIndex(sf::Vector2i(gridIndex.x + directs[i], gridIndex.y + directs[i+1]))) {
-            if (obs_grid[gridIndex.y + directs[i+1]][gridIndex.x + directs[i]] == 1) {
+            if (obs_grid[gridIndex.y + directs[i+1]][gridIndex.x + directs[i]] == 1 && b->getBoidType() == 0) {
                 b->limitForceDir(sf::Vector2f(directs[i], directs[i+1]));
             }
         }

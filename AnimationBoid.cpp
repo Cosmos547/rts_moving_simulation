@@ -10,7 +10,7 @@ AnimationBoid::AnimationBoid(float xpos, float ypos, Animation* a) : Boid(xpos, 
 
 void AnimationBoid::update(float timestep) {
     Boid::update(timestep);
-    ani->update(timestep);
+    ani->update(timestep, Boid::speed);
 }
 
 

@@ -9,7 +9,7 @@ class PotentialField {
     public:
         PotentialField(int w, int h);
         ~PotentialField();
-        void loadShade(int** in_shade);
+        void loadShade(float** in_shade);
         void loadObs(int** in_shade);
         void loadGrid(int** in_shade);
         void generatePF();

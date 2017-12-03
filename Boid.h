@@ -28,9 +28,12 @@ class Boid {
         void loadPF(PotentialField* p, int pid);
         int getPFID();
         int** getGrid();
+        float getSize();
+        int getBoidType();
 
 
     protected:
+        int btype;
         void calculate_speed(float timestep);
         void update_position(float timestep);
         float max_speed;
@@ -50,4 +53,17 @@ class Boid {
         bool isSelected;
 
         sf::Vector2f desti;
+};
+
+
+
+
+class FlyingBoid : public Boid {
+    public:
+        FlyingBoid(float xpos, float ypos);
+        void render(sf::RenderWindow* window);
+
+    private:
+        sf::Texture t;
+        sf::Sprite s;
 };

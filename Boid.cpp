@@ -19,7 +19,12 @@ Boid::Boid(float xpos, float ypos) {
     pfid = 0;
     orientation = 270.0f;
     size = 5.0f;
+    btype = 0;
 
+}
+
+int Boid::getBoidType() {
+    return btype;
 }
 
 void Boid::setSelected(bool b) {
@@ -103,39 +108,36 @@ void Boid::limitForceDir(sf::Vector2f dir) {
     }
 }
 
+float Boid::getSize() {
+    return size;
+}
+
 
 void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
-    pf = dir;
-    force = sf::Vector2f(0, 0);
-    // Calculate separation force
-    float sep = size*2;
+    float sep = 15;
+
+
     sf::Vector2f sep_force(0, 0);
-    int count = 0;
+    int sep_count = 0;
+    float ndist = 15;
+    sf::Vector2f align_force(0,0);
+    sf::Vector2f cohesion_force(0, 0);
+    int account = 0;
+    int scount = 0;
+    int ali_count = 0;
+    int coh_count = 0;
     for (auto &i : *boids) {
+        if (btype != i->getBoidType()) {
+            continue;
+        }
         float dis = this->getDistance(i);
         if (dis > 0 && dis < sep) {
             sf::Vector2f opos = i->getPosition();
             float ang = atan2(opos.y - location.y, opos.x - location.x);
-            sep_force.x += -cos(ang)/(dis/2);
-            sep_force.y += -sin(ang)/(dis/2);
-            count++;
+            sep_force.x += -cos(ang)/dis;
+            sep_force.y += -sin(ang)/dis;
+            sep_count++;
         }
-    }
-
-    if (count > 0) {
-        sep_force = sep_force/(float) count;
-    }
-
-
-
-    // Calculate alignment forces
-    float ndist = 15;
-    sf::Vector2f align_force(0,0);
-    count = 0;
-    int account = 0;
-    int scount = 0;
-    for (auto &i : *boids) {
-        float dis = this->getDistance(i);
         if (dis > 0 && dis < ndist) {
             if (i->getPFID() == pfid) {
                 if (!i->getActiveState()) {
@@ -145,52 +147,39 @@ void Boid::calculate_forces(std::vector<Boid*> *boids, sf::Vector2f dir) {
             }
 
             align_force += limitVector(i->getSpeed(), 1);
-            count ++;
+            ali_count ++;
         }
+        if (dis > 0 && dis < ndist) {
+            cohesion_force += (i->getPosition() - location)/dis;
+            cohesion_force = cohesion_force;
+            coh_count ++;
+        }
+    }
+
+    if (sep_count > 0) {
+        sep_force = sep_force/(float) sep_count;
     }
 
     if (account > scount/2) {
         isActive = false;
     }
 
-    if (count > 0) {
-        align_force = align_force/(float) count;
+    if (ali_count > 0) {
+        align_force = align_force/(float) ali_count;
 
     }
 
-
-
-    // Calculate cohesion forces
-    ndist = 15;
-    sf::Vector2f cohesion_force(0, 0);
-    count = 0;
-
-    for (auto &i : *boids) {
-        float dis = this->getDistance(i);
-        if (dis > 0 && dis < ndist) {
-            cohesion_force += (i->getPosition() - location)/dis;
-            cohesion_force = cohesion_force;
-            count ++;
-        }
-    }
-
-    if (count > 0) {
-        cohesion_force = cohesion_force/(float)count;        
+    if (coh_count > 0) {
+        cohesion_force = cohesion_force/(float)coh_count;        
 
     }
 
-
-    // Calculate Destination force
-    sf::Vector2f dest_force = dir;
-
-
-
-    force += 5.5f * sep_force;
+    force = 5.5f * sep_force;
     if (isActive) {
         force -= 2.0f * sep_force;
         force += 0.005f * align_force;
         force += 0.1f * cohesion_force;
-        force += 0.3f * dest_force;
+        force += 0.3f * dir;
     }
     force *= 100.0f;
 
@@ -234,6 +223,7 @@ void Boid::render(sf::RenderWindow* window) {
         rect.setFillColor(sf::Color(255, 255, 255, 255));
     }
     rect.setPosition(location);
+    rect.setRotation(orientation);
     (*window).draw(rect);
     sf::Vertex line[2];
     line[0].position = location;
@@ -254,3 +244,40 @@ void Boid::render(sf::RenderWindow* window) {
 
 }
 
+
+
+
+FlyingBoid::FlyingBoid(float xpos, float ypos) : Boid(xpos, ypos) {
+    Boid::size = 10.0f;
+
+    t.loadFromFile("Assets/plane.png");
+    t.setSmooth(false);
+    s.setTexture(t);
+    s.setScale({0.1, 0.1});
+    btype = 1;
+}
+
+
+void FlyingBoid::render(sf::RenderWindow* window) {
+    sf::Vertex line[2];
+    line[0].position = Boid::location;
+    line[1].position = {Boid::location.x, Boid::location.y-15.0f};
+    line[0].color = sf::Color::Blue;
+    line[1].color = sf::Color::Blue;
+    (*window).draw(line, 2, sf::Lines);
+    s.setOrigin(s.getLocalBounds().width/2, s.getLocalBounds().height/2);
+    s.setRotation(Boid::orientation + 90.0f);
+    s.setPosition({location.x, location.y - 15.0f});
+
+    (*window).draw(s);
+
+    if (Boid::isSelected) {
+        sf::CircleShape sh(size/2);
+        sh.setOrigin(sh.getRadius(), sh.getRadius());
+        sh.setPosition(Boid::location);
+        sh.setFillColor(sf::Color::Transparent);
+        sh.setOutlineThickness(1.0f);
+        sh.setOutlineColor(sf::Color::Red);
+        (*window).draw(sh);
+    }
+}

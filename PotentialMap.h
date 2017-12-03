@@ -23,6 +23,7 @@ class PotentialMap {
         void calculate_obs_dir(Boid* b);
         void selectBoids(sf::Vector2f pos, sf::Vector2f size);
         void setObs(float x, float y, float w, float h);
+        void togglePotentialMap();
 
         std::vector<SceneObject*> sobjs;
 

@@ -25,10 +25,10 @@ int** PotentialField::getGrid() {
     return pf;
 }
 
-void PotentialField::loadShade(int** in) {
+void PotentialField::loadShade(float** in) {
     for (int i = 0; i < h; i++) {
         for (int j = 0; j < w; j++) {
-            shade[i][j] = in[i][j];
+            shade[i][j] = (int)in[i][j];
         }
     }
 }
