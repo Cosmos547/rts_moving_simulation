@@ -21,7 +21,19 @@ $ LD_LIBRARY_PATH=./SFML-2.4.2/lib ./rts [some map txt]
 ```
 
 #### Manual
+####### Controls
 - `SPACE` toggles the view for displaying potential field
+- Click and drag with left mouse to select agents. When agents are selected they will have visual changes. Such as a circle around it or change color.
+- Scroll with zoom in/out of the view.
+- Right click will issue "Commands" to current selected Agents
+- Click and drag with middle mouse to move around the map.
+####### Map format
+- `grid width height width_blocks height_blocks` will load the grid of the map.
+- `ab xpos ypos asset_path` will add a animation boid at `xpos ypos` on the map with `asset_path`.
+- `b xpos ypos` will load a simple boid at `xpos ypos` on the map.
+- `fb xpos ypos` will load a flying boid at `xpos ypos` on the map.
+- `wf xpos ypos width height` will load a water fountain at `xpos ypos` with `width` and `height`.
+- `st xpos ypos width height asset_path x_offset y_offset width_block height_block` will load a scene texture `asset_path` at `xpos ypos` with `width` and `height`. `x_offset` and `y_offset` defines the offset for it being a obstacle and `width_block` `height_block` defines how large are the obstacles.
 
 #### Objectives
 1. Interactive map with mini-map that will pan around and zoom base of the input of a mouse.
