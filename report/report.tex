@@ -28,6 +28,7 @@ There are 2 types of agents in the simulation besides the very basic one. The fi
 \subsection*{Potential Field}
 The potential field generates map for the agents to navigate around the map. When a destination is assigned, for each block on the potential field, it will be assigned a value based on the distance it's from the destination. The more close it's to the destination, the higher the value is. Then each obstacle on the map it will create a negative value around it and decrease the potential field value and each block. As a result, at any point on the field, agent only needs to move to the highest value of the field near the agent. 
 
+\subsection*{}
 There are also some other parts of the simulation that is worth mentioning. 
 \subsection*{Agent Navigation}
 When agents are moving around the map not reaching the destination, the boid movement are a great fit. However, since the agents are moving in groups it hard to determine when to stop. For example, when a one of the agents in the group reaches the destination., if we set it to stop, the other agents will continue to move to the destination and make the first agent to move. This kind of works when the entire group are moving together. However, if we were to move a group of agents to one place, one of the agents arrive at a later time than the other. It will break the entire group to move to the center. To solve this problem, I implemented the active state mention earlier. When a agents reaches it's destination it's active state will set to false. Then other agents in the same group will set it's state to inactive when half of the agents near them are inactive. With this way, in the earlier situation, the agents that arrives late will stop at the edge of group and not break the entire group since all the earlier agents are set to inactive. 
@@ -35,6 +36,11 @@ When agents are moving around the map not reaching the destination, the boid mov
 \subsection*{Boid physics}
 As mentions earlier, there are 3 major forces acting on each of the agents. However, due to the purpose of the simulation. It is essential to tweak the parameters so that when the agents moving they will not collide with each other and when they are not moving they will separate to a distance. Also, the force that generates from the potential field provides the navigation direction should not be affected. It is very hard to say how much effort was put in to calculate the forces. However, the nice thing is the results looks pretty decent. There could be improvements as the result I have is still far away from what modern RTS games looks like.
 
+
+\subsection*{Fog of war}
+Fog of war is an essential part of RTS games after its first introduction. In this project I implemented fog of war under the idea of lights. It uses alpha blending to add texture of light to the field to create fog of war. 
+
+\subsection*{}
 This covers almost everything related to my final project. There are some markdown documentation inside the docs folder. More details can be find there. 
 
 \section*{Future improvements}

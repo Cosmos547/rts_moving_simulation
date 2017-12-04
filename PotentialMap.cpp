@@ -187,24 +187,6 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
         }
     }
 
-    for (int i = 0; i < h_size; i++) {
-        for (int j = 0; j < w_size; j++) {
-            if (obs_grid[i][j] == 1) {
-                for (int ii = 0; ii < h_size; ii++) {
-                    for (int jj = 0; jj < w_size; jj++) {
-                        int dis = (jj-j)*(jj-j) + (ii - i)* (ii - i);
-                        if (dis > 0 && dis < 25) {
-                            shade[ii][jj] -= 80.0f/dis;
-                        }
-                        if (dis == 0) {
-                            shade[ii][jj] -= 80;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 
     PotentialField* cur_pf = new PotentialField(w_size, h_size);
     cur_pf->loadGrid(grid);
@@ -231,6 +213,29 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
     if (pfid_count > 10000) {
         pfid_count = 1;
     }
+
+}
+
+
+void PotentialMap::generateShade() {
+    for (int i = 0; i < h_size; i++) {
+        for (int j = 0; j < w_size; j++) {
+            if (obs_grid[i][j] == 1) {
+                for (int ii = 0; ii < h_size; ii++) {
+                    for (int jj = 0; jj < w_size; jj++) {
+                        int dis = (jj-j)*(jj-j) + (ii - i)* (ii - i);
+                        if (dis > 0 && dis < 25) {
+                            shade[ii][jj] -= 80.0f/dis;
+                        }
+                        if (dis == 0) {
+                            shade[ii][jj] -= 80;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 }
 

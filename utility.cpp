@@ -72,6 +72,7 @@ PotentialMap* generateMapFromFile(std::string filename) {
     }
 
 
+    pf->generateShade();
     return pf;
 }
 
