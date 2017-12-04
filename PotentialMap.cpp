@@ -176,7 +176,6 @@ void PotentialMap::setDestinationGrid(sf::Vector2f pos) {
             int dis = (j - gridlocation.x)*(j-gridlocation.x) + (i-gridlocation.y) *(i-gridlocation.y);
             int light = 128 - dis/5;
             grid[i][j] = light;
-            shade[i][j] = 0;
         }
     }
 
