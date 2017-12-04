@@ -5,7 +5,7 @@ The project is written with `SFML2.4.2` and uses `premake4` to generate the make
 
 I've created a script to compile and run the program. Using the following commands to test the program.
 
-The project only works under Linux with `premake4` installed and is only tested on `Ubuntu 16.04 LTS`.
+The project only works under Linux with `premake4` installed and is only tested on `Ubuntu 16.04 LTS` (lab `gl10`).
 
 ```
 $ ./configure
